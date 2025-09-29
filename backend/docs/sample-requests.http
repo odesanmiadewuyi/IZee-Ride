@@ -1,0 +1,506 @@
+### IZee-Ride API — Sample Requests
+
+@baseUrl = http://localhost:5000
+@token = REPLACE_WITH_JWT
+
+######################################################################
+# Auth
+######################################################################
+
+### Register
+POST {{baseUrl}}/api/auth/register
+Content-Type: application/json
+
+{
+  "name": "Test User",
+  "email": "testuser+{{}}@example.com",
+  "password": "TestPass123"
+}
+
+### Login
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "testuser@example.com",
+  "password": "TestPass123"
+}
+
+### My Profile (token required)
+GET {{baseUrl}}/api/auth/profile
+Authorization: Bearer {{token}}
+
+### Change Password (token required)
+POST {{baseUrl}}/api/auth/change-password
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "oldPassword": "TestPass123",
+  "newPassword": "NewPass456"
+}
+
+######################################################################
+# Users (token required via app-level middleware)
+######################################################################
+
+### Current User
+GET {{baseUrl}}/api/users/me
+Authorization: Bearer {{token}}
+
+### List Users
+GET {{baseUrl}}/api/users
+Authorization: Bearer {{token}}
+
+### Get User By ID
+GET {{baseUrl}}/api/users/1
+Authorization: Bearer {{token}}
+
+######################################################################
+# Vehicles
+######################################################################
+
+### List Vehicles
+GET {{baseUrl}}/api/vehicles
+
+### Create Vehicle
+POST {{baseUrl}}/api/vehicles
+Content-Type: application/json
+
+{
+  "model": "Honda Civic",
+  "plate_number": "XYZ-{{}}",
+  "driver_id": 1
+}
+
+### Get Vehicle By ID
+GET {{baseUrl}}/api/vehicles/1
+
+### Delete Vehicle
+DELETE {{baseUrl}}/api/vehicles/1
+
+######################################################################
+# Drivers
+######################################################################
+
+### List Drivers
+GET {{baseUrl}}/api/drivers
+
+### Create Driver
+POST {{baseUrl}}/api/drivers
+Content-Type: application/json
+
+{
+  "name": "Jane Doe",
+  "license_number": "LIC-{{}}",
+  "vehicle_type": "car"
+}
+
+### Get Driver By ID
+GET {{baseUrl}}/api/drivers/1
+
+### Update Driver
+PUT {{baseUrl}}/api/drivers/1
+Content-Type: application/json
+
+{
+  "name": "Jane A. Doe",
+  "license_number": "LIC-UPDATED-{{}}",
+  "vehicle_type": "suv"
+}
+
+### Delete Driver
+DELETE {{baseUrl}}/api/drivers/1
+
+######################################################################
+# Rides (token required)
+######################################################################
+
+### List My Rides
+GET {{baseUrl}}/api/rides
+Authorization: Bearer {{token}}
+
+### Get Ride By ID
+GET {{baseUrl}}/api/rides/1
+Authorization: Bearer {{token}}
+
+### Request Ride
+POST {{baseUrl}}/api/rides
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "driver_id": 1,
+  "pickup_location": "Lekki Phase 1",
+  "dropoff_location": "Victoria Island",
+  "fare": 2500.00
+}
+
+### Update Ride Status
+PUT {{baseUrl}}/api/rides/1/status
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "status": "completed"
+}
+
+######################################################################
+# Payments
+######################################################################
+
+### List Payments
+GET {{baseUrl}}/api/payments
+
+### Get Payment By ID
+GET {{baseUrl}}/api/payments/1
+
+### Create Payment
+POST {{baseUrl}}/api/payments
+Content-Type: application/json
+
+{
+  "ride_id": 1,
+  "user_id": 1,
+  "amount": 2500.00
+}
+
+### Update Payment
+PUT {{baseUrl}}/api/payments/1
+Content-Type: application/json
+
+{
+  "ride_id": 1,
+  "user_id": 1,
+  "amount": 2600.00,
+  "status": "completed"
+}
+
+### Delete Payment
+DELETE {{baseUrl}}/api/payments/1
+
+### Pay Service Charge (token required)
+POST {{baseUrl}}/api/payments/service-charge
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "rideId": 1,
+  "amount": 500.00,
+  "method": "wallet",
+  "reference": "SRV-{{}}"
+}
+
+### Pay Commission (token required)
+POST {{baseUrl}}/api/payments/commission
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "rideId": 1,
+  "amount": 250.00,
+  "method": "wallet",
+  "reference": "COM-{{}}"
+}
+
+######################################################################
+# Wallets (token required)
+######################################################################
+
+### My Wallet
+GET {{baseUrl}}/api/wallets/me
+Authorization: Bearer {{token}}
+
+### My Wallet (alias root)
+GET {{baseUrl}}/api/wallets
+Authorization: Bearer {{token}}
+
+### Wallet Transactions
+GET {{baseUrl}}/api/wallets/me/transactions
+Authorization: Bearer {{token}}
+
+### Top Up Wallet
+POST {{baseUrl}}/api/wallets/topup
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "amount": 10000,
+  "source": "card",
+  "reference": "TOP-{{}}"
+}
+
+### Withdraw From Wallet
+POST {{baseUrl}}/api/wallets/withdraw
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "amount": 1500,
+  "reference": "WDR-{{}}"
+}
+
+######################################################################
+# Rewards / Milepoints (token required for mutations)
+######################################################################
+
+### My Mile Points
+GET {{baseUrl}}/api/rewards/points/me
+Authorization: Bearer {{token}}
+
+### Earn Points
+POST {{baseUrl}}/api/rewards/points/earn
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "points": 50,
+  "reference": "RIDE-{{}}",
+  "meta": { "rideId": 1 }
+}
+
+### List Tickets
+GET {{baseUrl}}/api/rewards/tickets
+
+### Claim Ticket
+POST {{baseUrl}}/api/rewards/tickets/claim
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "ticketId": 1
+}
+
+######################################################################
+# Support (token required)
+######################################################################
+
+### Send Support Message
+POST {{baseUrl}}/api/support
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "subject": "App Feedback",
+  "message": "I love the app!",
+  "email": "user@example.com"
+}
+
+### My Support Messages
+GET {{baseUrl}}/api/support/me
+Authorization: Bearer {{token}}
+
+######################################################################
+# Documents (token required)
+######################################################################
+
+### List My Documents
+GET {{baseUrl}}/api/documents/me
+Authorization: Bearer {{token}}
+
+### Upload Document
+POST {{baseUrl}}/api/documents
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "category": "driver_license",
+  "fileName": "license.jpg",
+  "fileUrl": "https://files.example.com/license.jpg"
+}
+
+######################################################################
+# Community
+######################################################################
+
+### List Community Messages
+GET {{baseUrl}}/api/community
+
+### Post Community Message (token required)
+POST {{baseUrl}}/api/community
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "content": "Hello, community!"
+}
+
+######################################################################
+# Vendors & Offers & Parts (vendor/mechanic flows)
+######################################################################
+
+### Create/Update My Vendor Profile (token required)
+POST {{baseUrl}}/api/vendors
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Acme Autos",
+  "company_name": "Acme Auto Parts Ltd",
+  "email": "vendor@example.com",
+  "phone": "+2348000000000",
+  "state": "Lagos",
+  "lga": "Eti-Osa",
+  "business_address": "12 Bishop Aboyade Cole",
+  "date_of_birth": "1988-02-01",
+  "valid_id": "https://files.example.com/id.png",
+  "profile_picture": "https://files.example.com/profile.png",
+  "category": "parts"
+}
+
+### List Vendors
+GET {{baseUrl}}/api/vendors
+
+### Create Mechanic Profile (token required)
+POST {{baseUrl}}/api/mechanics
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "AutoFix Pro",
+  "company_name": "AutoFix Services",
+  "email": "mech@example.com",
+  "phone": "+2348111111111",
+  "state": "Lagos",
+  "lga": "Ikeja",
+  "business_address": "1 Adeola Odutola",
+  "date_of_birth": "1990-06-01",
+  "valid_id": "https://files.example.com/id2.png",
+  "profile_picture": "https://files.example.com/mech.png"
+}
+
+### List Mechanics
+GET {{baseUrl}}/api/mechanics
+
+### List Services Catalog
+GET {{baseUrl}}/api/services
+
+### Set My Vendor Services (token required)
+POST {{baseUrl}}/api/services/vendors/me/services
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "keys": ["mechanical", "parts"]
+}
+
+### Activate/Deactivate Vendor (token required; admin assumed elsewhere)
+PATCH {{baseUrl}}/api/services/vendors/1/activate
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "is_active": true
+}
+
+### List Vendors By Service
+GET {{baseUrl}}/api/services/vendors?key=mechanical&state=Lagos&lga=Eti-Osa
+
+### Create Vendor Offer (token required; vendor and service must exist)
+POST {{baseUrl}}/api/vendor-offers
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "service_key": "mechanical",
+  "name": "Brake Pad Replacement",
+  "price": 7500,
+  "description": "Replace front brake pads"
+}
+
+### List Vendor Offers (optional filters vendor_id, service_key)
+GET {{baseUrl}}/api/vendor-offers?vendor_id=1&service_key=mechanical
+
+### Create Part (token required; vendor must exist)
+POST {{baseUrl}}/api/parts
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Oil Filter",
+  "brand": "Bosch",
+  "vehicle_make": "Toyota",
+  "vehicle_model": "Corolla",
+  "vehicle_type": "car",
+  "price": 2500,
+  "stock": 100,
+  "image_url": "https://files.example.com/oil-filter.png",
+  "description": "High performance oil filter"
+}
+
+### List Parts (optional vendor_id)
+GET {{baseUrl}}/api/parts?vendor_id=1
+
+### Create Part Order (token required; mechanic profile OR driver wallet required)
+POST {{baseUrl}}/api/part-orders
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "items": [
+    { "part_id": 1, "quantity": 2 }
+  ],
+  "courier_cost": 1500,
+  "installation_fee": 3000,
+  "delivery_address": "10 Adeola Odeku, VI"
+}
+
+### List My Mechanic Orders (token required; mechanic only)
+GET {{baseUrl}}/api/part-orders/me
+Authorization: Bearer {{token}}
+
+### List Vendor Orders (token required; vendor only)
+GET {{baseUrl}}/api/part-orders/vendor
+Authorization: Bearer {{token}}
+
+### Update Part Order Status (token required; vendor only)
+PATCH {{baseUrl}}/api/part-orders/1/status
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "status": "accepted"
+}
+
+######################################################################
+# Causes
+######################################################################
+
+### List Causes
+GET {{baseUrl}}/api/causes
+
+### Create Cause
+POST {{baseUrl}}/api/causes
+Content-Type: application/json
+
+{
+  "title": "Accident Relief Fund",
+  "description": "Support drivers affected by accidents",
+  "amountRequired": 500000,
+  "currency": "NGN"
+}
+
+######################################################################
+# Cards (token required)
+######################################################################
+
+### List Cards
+GET {{baseUrl}}/api/cards
+Authorization: Bearer {{token}}
+
+### Add Card
+POST {{baseUrl}}/api/cards
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "cardNumber": "4242424242424242",
+  "expMonth": 12,
+  "expYear": 2030,
+  "brand": "Visa"
+}
+
+### Delete Card
+DELETE {{baseUrl}}/api/cards/1
+Authorization: Bearer {{token}}
+
